@@ -28,7 +28,6 @@ public class IMHandler extends SimpleChannelInboundHandler<Packet> {
         handlerMap = new HashMap<>();
         //这里可以优化成单例模式，我这里就不做了
         handlerMap.put(MESSAGE_REQUEST,new MessageRequestHandler());
-        handlerMap.put(LOGIN_REQUEST,new LoginRequestHandler());
         handlerMap.put(MESSAGE_REQUEST,new MessageRequestHandler());
         handlerMap.put(LOGOUT_REQUEST,new LogOutRequestHandler());
         handlerMap.put(CREATE_GROUP_REQUEST,new CreateGroupRequestHandler());
@@ -38,6 +37,10 @@ public class IMHandler extends SimpleChannelInboundHandler<Packet> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet msg) throws Exception {
-        handlerMap.get(msg.getCommand()).channelRead(ctx,msg);
+        if (handlerMap.get(msg.getCommand()) != null) {
+            handlerMap.get(msg.getCommand()).channelRead(ctx,msg);
+        }else {
+            System.out.println(msg.getCommand()+"指令忘记配对应的handler了");
+        }
     }
 }

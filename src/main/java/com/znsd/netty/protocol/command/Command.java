@@ -18,4 +18,6 @@ public interface Command {
     Byte QUIT_GROUP_RESPONSE = 10;
     Byte QUERY_GROUP_MEMBER = 11;
     Byte ERROR_EXCEPTION = 12;
+    Byte HEART_BEAT_REQUEST = 13;
+    Byte HEART_BEAT_RESPONSE = 14;
 }

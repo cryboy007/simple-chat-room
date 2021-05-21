@@ -6,6 +6,7 @@ import com.znsd.netty.client.console.QuitGroupConsoleCommand;
 import com.znsd.netty.client.handler.*;
 import com.znsd.netty.codec.PacketCodecHandler;
 import com.znsd.netty.codec.Unpacker;
+import com.znsd.netty.handler.IMIdleStateHandler;
 import com.znsd.netty.protocol.request.LoginRequestPacket;
 import com.znsd.netty.util.SessionUtil;
 import io.netty.bootstrap.Bootstrap;
@@ -15,6 +16,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringEncoder;
 
+import java.net.URL;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class NettyClient {
     private static String HOST = "localhost";
-    private static int PORT = 8899;
+    private static int PORT = 8081;
     private static int MAX_RETRY = 5;
 
     public static void main(String[] args) {
@@ -40,8 +42,10 @@ public class NettyClient {
                 .handler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
+                        ch.pipeline().addLast(new IMIdleStateHandler());
                         ch.pipeline().addLast(new Unpacker());
                         ch.pipeline().addLast(new PacketCodecHandler());
+                        /** 这里其实也可以像Server端一样用策略模式*/
                         ch.pipeline().addLast(new LoginResponseHandler());
                         ch.pipeline().addLast(new MessageResponseHandler());
                         ch.pipeline().addLast(new LogOutResponseHandler());
@@ -49,6 +53,8 @@ public class NettyClient {
                         ch.pipeline().addLast(new QuitGroupResponseHandler());
                         ch.pipeline().addLast(new QueryGroupMemberHandler());
                         ch.pipeline().addLast(new ExceptionResponseHandler());
+                        // 心跳定时器
+                        ch.pipeline().addLast(new HeartBeatTimerHandler());
                     }
                 });
         connect(bootstrap,HOST,PORT,MAX_RETRY);

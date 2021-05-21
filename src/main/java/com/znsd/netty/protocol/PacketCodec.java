@@ -43,6 +43,8 @@ public class PacketCodec {
         packetTypeMap.put(QUIT_GROUP_RESPONSE, QuitGroupResponsePacket.class);
         packetTypeMap.put(QUERY_GROUP_MEMBER,QueryGroupRequestPacket.class);
         packetTypeMap.put(ERROR_EXCEPTION,ExceptionResponsePacket.class);
+        packetTypeMap.put(HEART_BEAT_REQUEST,HeartBeatRequestPacket.class);
+        packetTypeMap.put(HEART_BEAT_RESPONSE,HeartBeatResponsePacket.class);
 
         serializerMap = new HashMap<>();
         Serializer serializer = new JSONSerializer();
